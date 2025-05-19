@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七彩霓虹灯</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neonRed: '#FF3333',
+                        neonOrange: '#FF8C00',
+                        neonYellow: '#FFFF33',
+                        neonGreen: '#33FF33',
+                        neonBlue: '#3366FF',
+                        neonIndigo: '#6633FF',
+                        neonViolet: '#CC33FF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .neon-glow {
+                filter: drop-shadow(0 0 8px currentColor);
+            }
+            .pulse-animation {
+                animation: pulse 1s infinite alternate;
+            }
+            @keyframes pulse {
+                from { opacity: 0.7; transform: scale(0.98); }
+                to { opacity: 1; transform: scale(1.02); }
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white font-sans flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full bg-gray-800/50 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-gray-700/50">
+        <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-neonRed via-neonBlue to-neonViolet">七彩霓虹灯</h1>
+        
+        <div class="flex flex-col items-center justify-center space-y-8">
+            <!-- 霓虹灯容器 -->
+            <div id="neon-container" class="flex flex-wrap justify-center gap-6 md:gap-10 p-6 bg-gray-900/30 rounded-xl border border-gray-700/50 shadow-inner">
+                <!-- 7个霓虹灯 -->
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+                <div class="neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300"></div>
+            </div>
+            
+            <!-- 控制面板 -->
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+                <button id="start-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 flex items-center">
+                    <i class="fa fa-play mr-2"></i> 启动
+                </button>
+                <button id="stop-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 flex items-center" disabled>
+                    <i class="fa fa-stop mr-2"></i> 停止
+                </button>
+            </div>
+            
+            <!-- 动画速度控制 -->
+            <div class="w-full max-w-md mt-8">
+                <label for="speed-control" class="block text-sm font-medium text-gray-300 mb-2">动画速度: <span id="speed-value">中等</span></label>
+                <input type="range" id="speed-control" min="500" max="2000" step="100" value="1000" 
+                       class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neonBlue">
+                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>慢</span>
+                    <span>快</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 说明文字 -->
+        <div class="mt-8 text-center text-gray-400 text-sm">
+            <p>每个霓虹灯将循环显示七种颜色：红、橙、黄、绿、蓝、靛、紫</p>
+            <p class="mt-1">同一时刻，七个灯的颜色各不相同</p>
+            <p class="mt-1 text-neonYellow">点击停止后，霓虹灯将保持当前颜色</p>
+        </div>
+    </div>
+    
+    <footer class="mt-10 text-center text-gray-500 text-xs">
+        <p>七彩霓虹灯效果 &copy; 2025</p>
+    </footer>
+
+    <script>
+        // 定义七种霓虹颜色
+        const colors = [
+            'bg-neonRed',
+            'bg-neonOrange',
+            'bg-neonYellow',
+            'bg-neonGreen',
+            'bg-neonBlue',
+            'bg-neonIndigo',
+            'bg-neonViolet'
+        ];
+        
+        // 获取DOM元素
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const speedControl = document.getElementById('speed-control');
+        const speedValue = document.getElementById('speed-value');
+        const neonLights = document.querySelectorAll('.neon-light');
+        
+        // 动画相关变量
+        let animationInterval;
+        let animationSpeed = 1000; // 默认速度（毫秒）
+        let currentStep = 0;
+        
+        // 更新速度显示
+        speedControl.addEventListener('input', () => {
+            animationSpeed = parseInt(speedControl.value);
+            const speedTexts = ['极慢', '很慢', '慢速', '中等', '快速', '很快', '极快'];
+            const index = Math.round((animationSpeed - 500) / 250);
+            speedValue.textContent = speedTexts[index];
+            
+            // 如果动画正在运行，更新间隔
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                startAnimation();
+            }
+        });
+        
+        // 启动动画
+        function startAnimation() {
+            // 为每个灯设置初始颜色
+            setInitialColors();
+            
+            // 设置定时器
+            animationInterval = setInterval(() => {
+                // 增加当前步骤
+                currentStep = (currentStep + 1) % colors.length;
+                
+                // 更新所有灯的颜色
+                updateNeonColors();
+            }, animationSpeed);
+        }
+        
+        // 设置初始颜色
+        function setInitialColors() {
+            neonLights.forEach((light, index) => {
+                // 清除所有颜色类
+                light.className = 'neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300';
+                
+                // 添加新的颜色类和发光效果
+                const colorIndex = (index + currentStep) % colors.length;
+                light.classList.add(colors[colorIndex], 'neon-glow', 'pulse-animation');
+            });
+        }
+        
+        // 更新霓虹灯颜色
+        function updateNeonColors() {
+            neonLights.forEach((light, index) => {
+                // 计算当前灯的颜色索引
+                const colorIndex = (index + currentStep) % colors.length;
+                
+                // 移除所有颜色类和动画类
+                light.className = 'neon-light w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gray-700 transition-all duration-300';
+                
+                // 添加新的颜色类和发光效果
+                light.classList.add(colors[colorIndex], 'neon-glow', 'pulse-animation');
+            });
+        }
+        
+        // 停止动画 - 修改后版本：保持颜色但停止动画
+        function stopAnimation() {
+            clearInterval(animationInterval);
+            animationInterval = null;
+            
+            // 移除动画效果，但保留当前颜色
+            neonLights.forEach(light => {
+                light.classList.remove('pulse-animation');
+                // 添加一个轻微的发光效果，让静态状态也有霓虹感
+                light.classList.add('neon-glow');
+            });
+        }
+        
+        // 按钮事件监听
+        startBtn.addEventListener('click', () => {
+            startAnimation();
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // 添加按钮动画效果
+            startBtn.classList.add('animate-pulse');
+            setTimeout(() => {
+                startBtn.classList.remove('animate-pulse');
+            }, 500);
+        });
+        
+        stopBtn.addEventListener('click', () => {
+            stopAnimation();
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            
+            // 添加按钮动画效果
+            stopBtn.classList.add('animate-pulse');
+            setTimeout(() => {
+                stopBtn.classList.remove('animate-pulse');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+    
